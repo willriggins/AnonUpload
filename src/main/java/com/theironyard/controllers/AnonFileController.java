@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class AnonFileController {
         boolean perm;
         String comments = request.getParameter("comments");
         String permanence = request.getParameter("permanence");
+        String password = request.getParameter("password");
 //        Iterable<AnonFile> selection;
 
         if (permanence == null) {
@@ -71,23 +73,37 @@ public class AnonFileController {
         FileOutputStream fos = new FileOutputStream(uploadedFile);
         fos.write(file.getBytes());
 
-
-
-        AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comments, perm);
-        files.save(anonFile);
-
-        /**
-         * from class:
-         * put this into its own method and reuse it for file deletion:
-         * AnonFile fileinDB = files.findOne(least);
-         * File fileOnDisk = newFile("public/files/" + fileinDB.getRealFilename());
-         * fileOnDisk.delete();
-         * files.delete(lowest id file);
-         *
-         *
-         */
-
+        if (request.getParameter("password") == null) {
+            AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comments, perm);
+            files.save(anonFile);
+        }
+        else {
+            AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comments, perm, password);
+            files.save(anonFile);
+        }
 
         return "redirect:/";
+    }
+
+    @RequestMapping(path = "/delete", method = RequestMethod.POST)
+   public String delete(int id, String password) throws Exception {
+        AnonFile f = files.findOne(id);
+
+        // got help with this part from what we went over tuesday morning in class
+        // i should integrate pass hashing on this
+
+        if (f.getPerm()) {
+            throw new Exception("File is permanent and cannot be deleted");
+        }
+
+        if (f.getPassword() != null && !password.equals(f.getPassword())) {
+            throw new Exception("Wrong password");
+        }
+        else {
+            files.delete(id);
+            File fileName = new File("public/files/" + f.getRealFilename());
+            fileName.delete();
+            return "redirect:/";
+        }
     }
 }
