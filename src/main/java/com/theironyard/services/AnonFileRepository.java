@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface AnonFileRepository extends CrudRepository<AnonFile, Integer> {
     public Iterable<AnonFile> findByOrderByIdAsc();
-//    public Iterable<AnonFile> findByPerm(Boolean perm);
+    public Iterable<AnonFile> findByPermFalseOrderByIdAsc();
 
 
 }

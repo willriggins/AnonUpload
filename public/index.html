@@ -7,9 +7,14 @@
 <body>
 <form action="/upload" method="post" enctype="multipart/form-data">
     <input type="file" name="file" />
-    Permanent? <input type="checkbox" id="permanence" />
+    Permanent? <input type="checkbox" name="permanence" />
     <input type="text" name="comments" placeholder="Comments"/>
+    <input type="password" name="password" placeholder="Password for Deletion">
     <button type="submit">Upload</button>
+</form>
+<form action="/delete" method="post">
+    <input type="password" name="deletionPassword" placeholder="Deletion Password"/>
+    <button type="submit">Delete</button>
 </form>
 <div id="list"></div>
 <script src="jquery-3.0.0.js"></script>

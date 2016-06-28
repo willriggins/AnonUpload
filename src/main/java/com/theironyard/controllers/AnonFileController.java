@@ -38,15 +38,33 @@ public class AnonFileController {
         File dir = new File("public/files");
         dir.mkdirs();
 
+        boolean perm;
         String comments = request.getParameter("comments");
+        String permanence = request.getParameter("permanence");
+//        Iterable<AnonFile> selection;
 
-        Iterable<AnonFile> selection;
+        if (permanence == null) {
+            perm = false;
+        }
+        else {
+            perm = true;
+        }
 
         if (files.count() == FILE_LIMIT) {
-            selection = files.findByOrderByIdAsc();
-            int id = selection.iterator().next().getId();
-            files.delete(id);
-            System.out.println("hit file limit");
+            Iterable<AnonFile> permFiles = files.findByPermFalseOrderByIdAsc();
+            if (permFiles.iterator().hasNext()) {
+                AnonFile af = permFiles.iterator().next();
+                files.delete(af.getId());
+                File fileName = new File("public/files/" + af.getRealFilename());
+                fileName.delete();
+
+            }
+
+
+//            selection = files.findByOrderByIdAsc();
+//            int id = selection.iterator().next().getId();
+//            files.delete(id);
+//            System.out.println("hit file limit");
         }
 
         File uploadedFile = File.createTempFile("file", file.getOriginalFilename(), dir);
@@ -55,10 +73,11 @@ public class AnonFileController {
 
 
 
-        AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comments);
+        AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName(), comments, perm);
         files.save(anonFile);
 
         /**
+         * from class:
          * put this into its own method and reuse it for file deletion:
          * AnonFile fileinDB = files.findOne(least);
          * File fileOnDisk = newFile("public/files/" + fileinDB.getRealFilename());

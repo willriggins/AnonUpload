@@ -20,4 +20,9 @@ public class AnonFileRestController {
         return files.findAll();
         //json route ^
     }
+
+    @RequestMapping(path = "/permfiles", method = RequestMethod.GET)
+    public Iterable<AnonFile> getPermFiles() {
+        return files.findByPermFalseOrderByIdAsc();
+    }
 }

@@ -20,13 +20,16 @@ public class AnonFile {
 
     String comments;
 
+    Boolean perm;
+
     public AnonFile() {
     }
 
-    public AnonFile(String originalFilename, String realFilename, String comments) {
+    public AnonFile(String originalFilename, String realFilename, String comments, Boolean perm) {
         this.originalFilename = originalFilename;
         this.realFilename = realFilename;
         this.comments = comments;
+        this.perm = perm;
     }
 
     public AnonFile(String originalFilename, String realFilename) {
