@@ -44,15 +44,13 @@ public class AnonFileController {
             files.delete(id);
             System.out.println("success");
         }
+        File uploadedFile = File.createTempFile("file", file.getOriginalFilename(), dir);
+        FileOutputStream fos = new FileOutputStream(uploadedFile);
+        fos.write(file.getBytes());
 
-        else if (files.count() < FILE_LIMIT) {
-            File uploadedFile = File.createTempFile("file", file.getOriginalFilename(), dir);
-            FileOutputStream fos = new FileOutputStream(uploadedFile);
-            fos.write(file.getBytes());
+        AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName());
+        files.save(anonFile);
 
-            AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName());
-            files.save(anonFile);
-        }
 
         return "redirect:/";
     }
