@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,6 +23,8 @@ public class AnonFileController {
     @Autowired
     AnonFileRepository files;
 
+    int FILE_LIMIT = 10;
+
     @PostConstruct
     public void init() throws SQLException {
         Server.createWebServer().start();
@@ -35,12 +36,23 @@ public class AnonFileController {
         File dir = new File("public/files");
         dir.mkdirs();
 
-        File uploadedFile = File.createTempFile("file", file.getOriginalFilename(), dir);
-        FileOutputStream fos = new FileOutputStream(uploadedFile);
-        fos.write(file.getBytes());
+        Iterable<AnonFile> selection;
 
-        AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName());
-        files.save(anonFile);
+        if (files.count() == FILE_LIMIT) {
+            selection = files.findByOrderByIdAsc();
+            int id = selection.iterator().next().getId();
+            files.delete(id);
+            System.out.println("success");
+        }
+
+        else if (files.count() < FILE_LIMIT) {
+            File uploadedFile = File.createTempFile("file", file.getOriginalFilename(), dir);
+            FileOutputStream fos = new FileOutputStream(uploadedFile);
+            fos.write(file.getBytes());
+
+            AnonFile anonFile = new AnonFile(file.getOriginalFilename(), uploadedFile.getName());
+            files.save(anonFile);
+        }
 
         return "redirect:/";
     }
