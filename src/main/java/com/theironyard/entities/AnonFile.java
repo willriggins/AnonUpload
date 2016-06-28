@@ -18,7 +18,15 @@ public class AnonFile {
     @Column(nullable = false)
     String realFilename;
 
+    String comments;
+
     public AnonFile() {
+    }
+
+    public AnonFile(String originalFilename, String realFilename, String comments) {
+        this.originalFilename = originalFilename;
+        this.realFilename = realFilename;
+        this.comments = comments;
     }
 
     public AnonFile(String originalFilename, String realFilename) {
@@ -48,6 +56,14 @@ public class AnonFile {
 
     public void setRealFilename(String realFilename) {
         this.realFilename = realFilename;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }
 

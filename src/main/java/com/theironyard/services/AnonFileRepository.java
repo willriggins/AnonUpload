@@ -1,7 +1,6 @@
 package com.theironyard.services;
 
 import com.theironyard.entities.AnonFile;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -9,5 +8,7 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface AnonFileRepository extends CrudRepository<AnonFile, Integer> {
     public Iterable<AnonFile> findByOrderByIdAsc();
+//    public Iterable<AnonFile> findByPerm(Boolean perm);
+
 
 }
