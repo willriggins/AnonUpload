@@ -90,7 +90,7 @@ public class AnonFileController {
         AnonFile f = files.findOne(id);
 
         // got help with this part from what we went over tuesday morning in class
-        // i should integrate pass hashing on this
+        // TODO: Use password hashing after tuesday night's assignment
 
         if (f.getPerm()) {
             throw new Exception("File is permanent and cannot be deleted");
